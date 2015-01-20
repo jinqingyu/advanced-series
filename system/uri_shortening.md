@@ -34,13 +34,18 @@ Q: How do you design the data storage for this scale of data and requests?
 
 A: I want to see something along the lines of the following design:
 
-N backend partitions, each with M replicas. Scale N to account for data storage and write volume, scale M to account for number of read requests. All writes should be sent to all M replicas of a given partition, while reads can go to a single replica. Use some function of the short URL to determine which partition to store the mapping in / retrieve the data from. Recognition that the storage on each machine should be something like a hash or b-tree is good - we don't need a relational database here. An answer which uses a BDB file for the storage is a great answer, but I'll accept MySQL, Postgres, etc. If candidate proposes a heavy duty relational database (Oracle, SQL Server, etc.), I'll push them for a low cost solution, but the tendency to go there is already a yellow flag. If the candidate proposes a "NoSQL" solution such as Cassandra, Voldemort, or Riak, I'll give bonus points, but still push them for how to solve the problem from scratch (I want to see that they know how to figure out an algorithm for this, not just that they know of a solution somebody else has designed).
+Partitioning/Replication:
+N backend partitions, each with M replicas. Scale N to account for data storage and write volume, scale M to account for number of read requests. Writes should be sent to all M replicas of a given partition, i.e., writes should be synced to all M replicas to ensure strong consistency, while reads can go to a single replica. Use some function of the short URL to determine which partition to store the mapping in / retrieve the data from. Recognition that the storage on each machine should be something like a hash or b-tree is good - we don't need a relational database here. An answer which uses a BDB file for the storage is a great answer, but I'll accept MySQL, Postgres, etc. If candidate proposes a heavy duty relational database (Oracle, SQL Server, etc.), I'll push them for a low cost solution, but the tendency to go there is already a yellow flag. If the candidate proposes a "NoSQL" solution such as Cassandra, Voldemort, or Riak, I'll give bonus points, but still push them for how to solve the problem from scratch (I want to see that they know how to figure out an algorithm for this, not just that they know of a solution somebody else has designed).
 
 If appropriate given the above solution, I will ask:
 
 Q: Does the short URL need to be a function of the long URL?
 
 A: no - anything but no is a red flag here. Hopefully the candidate will explain why they say no, if not, follow up with a question of why not.
+
+(Andy) I think it doesn't need to be a function, but can be. If you implement the shortening function with a random number generator, then it is not a function.  The reason is that the short URL generated for a given URL will be based on the existing short URLs ID generated at the time of the request. In otherwords, if you request to generate a shortened URL at different time, you will get different short URLs. Therefore the short URL is not a function of the long URL.
+
+There are several techniques to implement a URL shortening. Keys can be generated in base 36, assuming 26 letters and 10 numbers. In this case, each character in the sequence will be 0, 1, 2, ..., 9, a, b, c, ..., y, z. Alternatively, if uppercase and lowercase letters are differentiated, then each character can represent a single digit within a number of base 62 (26 + 26 + 10). In order to form the key, a hash function can be made, or a random number generated so that key sequence is not predictable. Or users may propose their own keys. For example, http://en.wikipedia.org/w/index.php?title=TinyURL&diff=283621022&oldid=283308287 can be shortened to http://bit.ly/tinyurlwiki.
 
 Q: How would you implement the expiration policy (remind them of the policy again, making sure the "minimum" or "at least" portion is stated clearly, but without being obnoxious about it, as it is a hint)?
 
@@ -73,4 +78,5 @@ Bonus points if they clean up after themselves with a process which periodically
 
 New replica hosts for the partition should be introduced by taking another replica out of service (both reads and writes), allow any queued transactions to apply, and then fully copy its data (including transaction records) to the new replica host. Once the copy has been completed, both replicas should be reintroduced in the manner described above for out of service replicas.
 
+## Conclusion:
 I judge candidates based on their ability to come up with reasonable designs (not necessarily exact replicas of my desired solution), and on how many of the questions they get through. Most candidates do not make it past the expiration policy question before phone screen / interview time runs out. The few that have made it to the "out of service replica" problem have not produced answers better than the minimum problem recognition and naive solution.
