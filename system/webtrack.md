@@ -3,6 +3,7 @@ Question: We need to track user activity on the site (page views, searches, invi
 Design a system to do manage and serve these feeds. Some constraints: should be able to process 10 TB/day of data, should be easy to manage, and reasonably cheap. Ask any questions you like.
 There are no constraints around fitting in with any other infrastructure you need to worry about.
 The goal of this question is to let the candidate walk through the complete design process. It is suitable for reasonably senior candidates who would have experience designing from-scratch systems. As much as possible they should drive the questions rather than you providing them with data up front.
+
 I break this down into three parts (1) single node, (2) distributed, (3) performance analysis. An ideal candidate will not need all these prompts, answering most of the subquestions on their own, but i find some prompting is usually needed to get depth.
 
 ## Single Node Questions
