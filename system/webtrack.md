@@ -30,6 +30,8 @@ I break this down into three parts (1) single node, (2) distributed, (3) perform
    * They should ask something about peak load. Let them assume peak is 2x off-peak.
    * A correct answer here should outline which resources there are to consider (cpu, network io, IO bandwidth, IO Ops, memory, disk space, etc). They should have reasonable estimates for the capabilities of modern computers, and be able to estimate the performance of their system with respect to each of them. For most systems disk related things will be the bottleneck and they should be able to reason their way to some MB/sec performance and drive an estimate off of that.
 
+
+
 Evaluation
 This is frankly a hard question to evaluate.
 A poor candidate will be lost with an unstructured question like this.
